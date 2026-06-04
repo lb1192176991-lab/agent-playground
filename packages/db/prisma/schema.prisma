@@ -1,12 +1,15 @@
+/// Prisma client generator — outputs TypeScript-safe client
 generator client {
   provider = "prisma-client-js"
 }
 
+/// PostgreSQL database connection (set via DATABASE_URL env var)
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+/// Platform user who can own jobs and submit proposals
 model User {
   id        String     @id @default(cuid())
   email     String     @unique
@@ -17,11 +20,12 @@ model User {
   updatedAt DateTime   @updatedAt
 }
 
+/// A task or project posted by a user, open for proposals
 model Job {
   id          String     @id @default(cuid())
   title       String
   description String?
-  status      String     @default("draft")
+  status      String     @default("draft") /// draft | open | in_progress | completed | cancelled
   ownerId     String
   owner       User       @relation(fields: [ownerId], references: [id])
   proposals   Proposal[]
@@ -29,11 +33,12 @@ model Job {
   updatedAt   DateTime   @updatedAt
 }
 
+/// A bid or application submitted by a user in response to a job
 model Proposal {
   id        String   @id @default(cuid())
   summary   String
   amount    Decimal?
-  status    String   @default("pending")
+  status    String   @default("pending") /// pending | accepted | rejected | withdrawn
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   jobId     String
