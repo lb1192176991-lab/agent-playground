@@ -1,0 +1,1 @@
+export { InfiniteSequence } from "./InfiniteSequence";
